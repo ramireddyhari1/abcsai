@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anantapur Book Center - Discount Calculator</title>
+  <style>
+    :root {
+      --maroon: #6f2a43;
+      --maroon-dark: #4f1e31;
+      --gold: #d8a83e;
+      --cream: #f8efdf;
+      --saffron: #f28c28;
+      --pink: #d96b8a;
+      --ink: #2f2430;
+      --muted: #7d6f7b;
+      --light: #fafaf8;
+      --border: #e8dfd4;
+      --success: #4caf50;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #faf7f2 0%, #f2ebe2 50%, #ebe2d6 100%);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 14px;
+    }
+
+    .phone {
+      width: min(100%, 420px);
+      border-radius: 32px;
+      overflow: hidden;
+      background: var(--cream);
+      box-shadow: 0 20px 60px rgba(111, 42, 67, 0.12), 0 0 0 1px rgba(111, 42, 67, 0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    /* ===== HEADER SECTION ===== */
+    .site-header {
+      background: linear-gradient(135deg, var(--maroon) 0%, #5a1f36 100%);
+      padding: 18px 16px 20px;
+      text-align: center;
+      border-bottom: 3px solid var(--gold);
+      box-shadow: 0 4px 12px rgba(111, 42, 67, 0.15);
+    }
+
+    .site-header h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      line-height: 1.2;
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status {
+      display: none;
+    }
+
+    /* ===== BANNER SECTION ===== */
+    .banner {
+      display: none;
+    }
+
+    .install {
+      display: none;
+    }
+
+    /* ===== CONTENT SECTION ===== */
+    .content {
+      padding: 16px 14px 24px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .headline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .headline-row h1 {
+      margin: 0;
+      color: var(--maroon);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      flex: 1;
+    }
+
+    .change-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, var(--gold), #c9933a);
+      color: var(--maroon);
+      font-weight: 700;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(216, 168, 62, 0.25);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .change-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(216, 168, 62, 0.35);
+    }
+
+    /* ===== PANEL/CARD SECTION ===== */
+    .panel {
+      background: linear-gradient(135deg, #ffffff 0%, #fffbf7 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 16px;
+      box-shadow: 0 4px 12px rgba(111, 42, 67, 0.06);
+    }
+
+    .final-card {
+      display: none;
+      background: linear-gradient(135deg, rgba(111, 42, 67, 0.05), rgba(242, 140, 40, 0.05));
+      border-radius: 16px;
+      padding: 16px;
+      color: var(--maroon);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--gold);
+    }
+
+    /* ===== INPUT FIELDS ===== */
+    .field {
+      position: relative;
+      margin: 18px 0 24px;
+    }
+
+    .field label {
+      position: absolute;
+      left: 16px;
+      top: -10px;
+      padding: 0 6px;
+      background: var(--cream);
+      color: var(--maroon);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      background: var(--light);
+      padding: 16px 16px 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      outline: none;
+      color: var(--ink);
+      transition: all 0.3s ease;
+    }
+
+    .field input:focus {
+      border-color: var(--gold);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(216, 168, 62, 0.1);
+    }
+
+    .field input::placeholder {
+      color: var(--muted);
+    }
+
+    #originalPrice {
+      border-color: var(--pink) !important;
+    }
+
+    #originalPrice:focus {
+      border-color: var(--pink) !important;
+      box-shadow: 0 0 0 3px rgba(217, 107, 138, 0.1) !important;
+    }
+
+    #discountValue {
+      border-color: var(--saffron) !important;
+    }
+
+    #discountValue:focus {
+      border-color: var(--saffron) !important;
+      box-shadow: 0 0 0 3px rgba(242, 140, 40, 0.1) !important;
+    }
+
+    #discountValue2 {
+      border-color: #ff9f1c !important;
+    }
+
+    #discountValue2:focus {
+      border-color: #ff9f1c !important;
+      box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.1) !important;
+    }
+
+    #discountValue3 {
+      border-color: #7a4af0 !important;
+    }
+
+    #discountValue3:focus {
+      border-color: #7a4af0 !important;
+      box-shadow: 0 0 0 3px rgba(122, 74, 240, 0.1) !important;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0 16px;
+    }
+
+    .actions button {
+      padding: 14px 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #clearBtn {
+      background: linear-gradient(135deg, #e8dfd4, #ddd4c8);
+      color: var(--maroon);
+      box-shadow: 0 4px 12px rgba(111, 42, 67, 0.1);
+    }
+
+    #clearBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(111, 42, 67, 0.15);
+    }
+
+    #calculateBtn {
+      background: linear-gradient(135deg, var(--gold), #c9933a);
+      color: white;
+      box-shadow: 0 4px 12px rgba(216, 168, 62, 0.3);
+      font-weight: 800;
+    }
+
+    #calculateBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(216, 168, 62, 0.4);
+    }
+
+    /* ===== RESULT CARDS ===== */
+    .rate-summary-shell,
+    .triple-summary-shell {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .display {
+      background: linear-gradient(135deg, rgba(111, 42, 67, 0.04), rgba(242, 140, 40, 0.04));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    }
+
+    .summary-title {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      text-align: center;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--maroon);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .rate-summary,
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .summary-block {
+      background: white;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .summary-block .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .summary-block .big {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--maroon);
+      line-height: 1;
+    }
+
+    .summary-block .big.small {
+      font-size: 1.8rem;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      text-align: center;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .details-grid > div {
+      padding: 8px 6px;
+    }
+
+    .mini-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .mini-value {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--maroon);
+      line-height: 1.1;
+    }
+
+    .share-result {
+      margin: 18px auto 0;
+      padding: 12px 20px;
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      background: white;
+      color: var(--maroon);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .share-result:hover {
+      background: var(--gold);
+      color: white;
+      box-shadow: 0 4px 12px rgba(216, 168, 62, 0.25);
+    }
+
+    .hint {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* ===== BOTTOM NAVIGATION ===== */
+    .bottom-nav {
+      display: none;
+    }
+
+    .nav-item {
+      display: none;
+    }
+
+    .nav-icon {
+      display: none;
+    }
+
+    /* ===== MODAL/OVERLAY ===== */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay[aria-hidden="false"] {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 24px 20px;
+      max-height: 80vh;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .modal::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h2 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+      color: var(--maroon);
+      text-align: center;
+    }
+
+    .modal .subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(216, 168, 62, 0.1);
+      color: var(--maroon);
+      font-size: 1.6rem;
+      font-weight: 300;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close:hover {
+      background: var(--gold);
+      color: white;
+    }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      margin: 8px 0;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .choice:hover {
+      border-color: var(--gold);
+      background: rgba(216, 168, 62, 0.05);
+    }
+
+    .choice input[type="radio"] {
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: var(--gold);
+      width: 20px;
+      height: 20px;
+    }
+
+    .choice span {
+      flex: 1;
+      font-size: 0.95rem;
+    }
+
+    /* ===== RESPONSIVE DESIGN ===== */
+    @media (max-width: 430px) {
+      .phone {
+        border-radius: 24px;
+      }
+
+      .site-header h1 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+      }
+
+      .headline-row h1 {
+        font-size: 1.3rem;
+      }
+
+      .summary-value {
+        font-size: 2.4rem;
+      }
+
+      .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <main class="phone" aria-label="Discount calculator app">
+      <header class="site-header">
+        <h1>Anantapur<br>Book Center</h1>
+      </header>
+
+
+
+
+
+      <div class="content">
+        <div class="headline-row">
+          <h1 id="screenTitle">Calculate Final Price</h1>
+          <button class="change-btn" id="openModal" type="button">Change</button>
+        </div>
+
+        <section class="panel">
+          <div class="final-card" id="finalCard">
+            Enter the original price and discount rate to calculate the final payable amount you need to pay.
+          </div>
+
+          <div class="rate-panel" id="ratePanel">
+            <div class="field">
+              <label id="originalLabel" for="originalPrice">Original Price</label>
+              <input id="originalPrice" type="number" value="500" min="0" />
+            </div>
+
+            <div class="field" id="discountFieldWrap">
+              <label id="discountLabel" for="discountValue">Discount Rate (%)</label>
+              <input id="discountValue" type="number" value="10" min="0" />
+            </div>
+
+            <div class="field" id="discountFieldWrap2" style="display:none;">
+              <label id="discountLabel2" for="discountValue2">2nd Discount (%)</label>
+              <input id="discountValue2" type="number" value="10" min="0" />
+            </div>
+
+            <div class="field" id="discountFieldWrap3" style="display:none;">
+              <label id="discountLabel3" for="discountValue3">3rd Discount (%)</label>
+              <input id="discountValue3" type="number" value="15" min="0" />
+            </div>
+          </div>
+
+          <div class="actions" id="actionsRow">
+            <button id="clearBtn" type="button">Clear</button>
+            <button id="calculateBtn" type="button">Calculate</button>
+          </div>
+
+          <div class="rate-summary-shell" id="rateSummaryShell">
+            <div class="display" aria-live="polite">
+              <div class="summary-title" id="resultCaption">Final Price</div>
+              <div class="summary-value" id="resultValue">₹450</div>
+              <div class="rate-summary">
+                <div class="summary-block">
+                  <div class="label">Original Price</div>
+                  <div class="big small" id="detailOriginal">500</div>
+                </div>
+                <div class="summary-block">
+                  <div class="label">Saved</div>
+                  <div class="big small" id="savedValue">₹50</div>
+                </div>
+              </div>
+
+              <div class="details-grid">
+                <div>
+                  <div class="mini-label">Original</div>
+                  <div class="mini-value" id="detailOriginalCopy">500</div>
+                </div>
+                <div>
+                  <div class="mini-label">Discount</div>
+                  <div class="mini-value" id="detailDiscount">50</div>
+                </div>
+                <div>
+                  <div class="mini-label">Rate</div>
+                  <div class="mini-value" id="detailRate">10 %</div>
+                </div>
+                <div>
+                  <div class="mini-label">Final</div>
+                  <div class="mini-value" id="detailFinal">450</div>
+                </div>
+              </div>
+
+              <button class="share-result" type="button">Share Result</button>
+            </div>
+          </div>
+
+          <div class="triple-summary-shell" id="tripleSummaryShell" style="display:none;">
+            <div class="display" aria-live="polite">
+              <div class="summary-title">Final Price</div>
+              <div class="summary-value" id="tripleFinalValue">₹0</div>
+              <div class="summary-grid">
+                <div class="summary-block">
+                  <div class="label">Price Difference</div>
+                  <div class="big small" id="tripleSavedValue">₹0</div>
+                </div>
+                <div class="summary-block">
+                  <div class="label">Effective Discount</div>
+                  <div class="big small" id="tripleEffectiveDiscount">0%</div>
+                </div>
+              </div>
+
+              <div class="details-grid">
+                <div>
+                  <div class="mini-label">Original</div>
+                  <div class="mini-value" id="tripleOriginalValue">0</div>
+                </div>
+                <div>
+                  <div class="mini-label">1st Disc</div>
+                  <div class="mini-value" id="tripleFirstDiscount">0%</div>
+                </div>
+                <div>
+                  <div class="mini-label">2nd Disc</div>
+                  <div class="mini-value" id="tripleSecondDiscount">0%</div>
+                </div>
+                <div>
+                  <div class="mini-label">3rd Disc</div>
+                  <div class="mini-value" id="tripleThirdDiscount">0%</div>
+                </div>
+              </div>
+
+              <button class="share-result" type="button">Share Result</button>
+            </div>
+          </div>
+
+          <p class="hint" id="helperText">
+            Enter the original and final price, then calculate the discount rate and saved amount.
+          </p>
+        </section>
+      </div>
+
+
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="close" id="closeModal" type="button" aria-label="Close modal">×</button>
+      <h2 id="modalTitle">Select Calculator</h2>
+      <p class="subtitle">Choose calculation type</p>
+
+      <label class="choice" data-mode="final">
+        <input type="radio" name="mode" value="final" checked />
+        <span>Calculate Final Price</span>
+      </label>
+
+      <label class="choice" data-mode="original">
+        <input type="radio" name="mode" value="original" />
+        <span>Calculate Original Price</span>
+      </label>
+
+      <label class="choice" data-mode="rate">
+        <input type="radio" name="mode" value="rate" />
+        <span>Calculate Discount Rate</span>
+      </label>
+
+      <label class="choice" data-mode="triple">
+        <input type="radio" name="mode" value="triple" />
+        <span>Triple Discount Calculator</span>
+      </label>
+
+      <label class="choice" data-mode="easy">
+        <input type="radio" name="mode" value="easy" />
+        <span>Easy Discount Calculator</span>
+      </label>
+
+      <label class="choice" data-mode="chart">
+        <input type="radio" name="mode" value="chart" />
+        <span>Calculate Discount Chart</span>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('overlay');
+    const closeModal = document.getElementById('closeModal');
+    const openModal = document.getElementById('openModal');
+    const phone = document.querySelector('.phone');
+
+    const originalPrice = document.getElementById('originalPrice');
+    const discountValue = document.getElementById('discountValue');
+    const discountValue2 = document.getElementById('discountValue2');
+    const discountValue3 = document.getElementById('discountValue3');
+
+    const resultValue = document.getElementById('resultValue');
+    const resultCaption = document.getElementById('resultCaption');
+    const savedValue = document.getElementById('savedValue');
+    const detailOriginal = document.getElementById('detailOriginal');
+    const detailOriginalCopy = document.getElementById('detailOriginalCopy');
+    const detailDiscount = document.getElementById('detailDiscount');
+    const detailRate = document.getElementById('detailRate');
+    const detailFinal = document.getElementById('detailFinal');
+
+    const tripleFinalValue = document.getElementById('tripleFinalValue');
+    const tripleSavedValue = document.getElementById('tripleSavedValue');
+    const tripleEffectiveDiscount = document.getElementById('tripleEffectiveDiscount');
+    const tripleOriginalValue = document.getElementById('tripleOriginalValue');
+    const tripleFirstDiscount = document.getElementById('tripleFirstDiscount');
+    const tripleSecondDiscount = document.getElementById('tripleSecondDiscount');
+    const tripleThirdDiscount = document.getElementById('tripleThirdDiscount');
+
+    const screenTitle = document.getElementById('screenTitle');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const helperText = document.getElementById('helperText');
+    const originalLabel = document.getElementById('originalLabel');
+    const discountLabel = document.getElementById('discountLabel');
+
+    const rateSummaryShell = document.getElementById('rateSummaryShell');
+    const tripleSummaryShell = document.getElementById('tripleSummaryShell');
+    const ratePanel = document.getElementById('ratePanel');
+    const discountFieldWrap2 = document.getElementById('discountFieldWrap2');
+    const discountFieldWrap3 = document.getElementById('discountFieldWrap3');
+    const finalCard = document.getElementById('finalCard');
+
+    let currentMode = 'final';
+
+    const modes = {
+      final: {
+        title: 'Calculate Final Price',
+        button: 'Calculate',
+        originalLabel: 'Original Price',
+        fieldLabel: 'Discount Rate (%)',
+        helper: 'Enter the original price and discount percentage to get the final price you need to pay.',
+        formula: (price, rate) => {
+          const finalPrice = price * (1 - rate / 100);
+          return { value: finalPrice, text: `${price} - ${rate}% = ${finalPrice}` };
+        }
+      },
+      original: {
+        title: 'Calculate Original Price',
+        button: 'Calculate',
+        originalLabel: 'Final Price',
+        fieldLabel: 'Discount Rate (%)',
+        helper: 'Enter the final price and discount percentage to find the original price.',
+        formula: (price, rate) => {
+          const originalPrice = price / (1 - rate / 100);
+          return { value: originalPrice, text: `${price} ÷ (1 - ${rate}%) = ${originalPrice}` };
+        }
+      },
+      rate: {
+        title: 'Calculate Discount Rate',
+        button: 'Calculate',
+        originalLabel: 'Original Price',
+        fieldLabel: 'Final Price',
+        helper: 'Enter the original and final price to calculate the discount percentage.',
+        formula: (price, finalPrice) => {
+          const rate = price === 0 ? 0 : ((price - finalPrice) / price) * 100;
+          return { value: rate, text: `((${price} - ${finalPrice}) / ${price}) × 100 = ${rate}%` };
+        }
+      },
+      triple: {
+        title: 'Triple Discount Calculator',
+        button: 'Calculate',
+        originalLabel: 'Original Price',
+        fieldLabel: '1st Discount (%)',
+        helper: 'Enter original price and three sequential discounts to calculate the final price.',
+        formula: (price, first, second, third) => {
+          const after1 = price * (1 - first / 100);
+          const after2 = after1 * (1 - second / 100);
+          const after3 = after2 * (1 - third / 100);
+          const effective = price === 0 ? 0 : (1 - after3 / price) * 100;
+          return { value: after3, saved: price - after3, effectiveDiscount: effective };
+        }
+      },
+      easy: {
+        title: 'Easy Discount Calculator',
+        button: 'Calculate',
+        originalLabel: 'Price',
+        fieldLabel: 'Discount Amount (₹)',
+        helper: 'Enter price and discount amount in rupees to get the final price.',
+        formula: (price, discount) => {
+          const finalPrice = price - discount;
+          const rate = price === 0 ? 0 : (discount / price) * 100;
+          return { value: finalPrice, text: `${price} - ${discount} = ${finalPrice}` };
+        }
+      },
+      chart: {
+        title: 'Calculate Discount Chart',
+        button: 'Calculate',
+        originalLabel: 'Original Price',
+        fieldLabel: 'Discount Rate (%)',
+        helper: 'Enter original price to see how it changes across different discount percentages.',
+        formula: (price, rate) => {
+          const finalPrice = price * (1 - rate / 100);
+          return { value: finalPrice, text: `${price} - ${rate}% = ${finalPrice}` };
+        }
+      }
+    };
+
+    function openSelection() {
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSelection() {
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function syncMode(mode) {
+      currentMode = mode;
+      const config = modes[mode];
+      screenTitle.textContent = config.title;
+      calculateBtn.textContent = config.button;
+      originalLabel.textContent = config.originalLabel;
+      discountLabel.textContent = config.fieldLabel;
+      helperText.textContent = config.helper;
+
+      phone.classList.toggle('mode-final', mode === 'final');
+      phone.classList.toggle('mode-rate', mode === 'rate');
+      phone.classList.toggle('mode-triple', mode === 'triple');
+
+      const isPanelMode = ['final', 'original', 'rate', 'triple', 'easy', 'chart'].includes(mode);
+      ratePanel.style.display = isPanelMode ? 'block' : 'none';
+      discountFieldWrap2.style.display = mode === 'triple' ? 'block' : 'none';
+      discountFieldWrap3.style.display = mode === 'triple' ? 'block' : 'none';
+      rateSummaryShell.style.display = mode === 'final' || mode === 'original' || mode === 'rate' || mode === 'easy' ? 'block' : 'none';
+      tripleSummaryShell.style.display = mode === 'triple' ? 'block' : 'none';
+      finalCard.style.display = mode === 'final' ? 'block' : 'none';
+
+      calculate();
+      closeSelection();
+    }
+
+    function calculate() {
+      const price = Number(originalPrice.value) || 0;
+      const rate = Number(discountValue.value) || 0;
+
+      if (currentMode === 'final') {
+        const finalPrice = price - (price * (rate / 100));
+        resultCaption.textContent = 'Final Price';
+        resultValue.textContent = `₹${finalPrice.toFixed(0)}`;
+        savedValue.textContent = `₹${(price * (rate / 100)).toFixed(0)}`;
+        detailOriginal.textContent = price.toFixed(0);
+        detailOriginalCopy.textContent = price.toFixed(0);
+        detailDiscount.textContent = (price * (rate / 100)).toFixed(0);
+        detailRate.textContent = `${rate.toFixed(0)} %`;
+        detailFinal.textContent = finalPrice.toFixed(0);
+      } else if (currentMode === 'original') {
+        const finalPrice = price;
+        const originalPrice_calc = price / (1 - rate / 100);
+        resultCaption.textContent = 'Original Price';
+        resultValue.textContent = `₹${originalPrice_calc.toFixed(0)}`;
+        savedValue.textContent = `₹${(originalPrice_calc - finalPrice).toFixed(0)}`;
+        detailOriginal.textContent = originalPrice_calc.toFixed(0);
+        detailOriginalCopy.textContent = originalPrice_calc.toFixed(0);
+        detailDiscount.textContent = (originalPrice_calc - finalPrice).toFixed(0);
+        detailRate.textContent = `${rate.toFixed(0)} %`;
+        detailFinal.textContent = finalPrice.toFixed(0);
+      } else if (currentMode === 'rate') {
+        const finalPrice = rate;
+        const discount_rate = price === 0 ? 0 : ((price - finalPrice) / price) * 100;
+        resultCaption.textContent = 'Discount Rate';
+        resultValue.textContent = `${discount_rate.toFixed(2)}%`;
+        savedValue.textContent = `₹${Math.abs(price - finalPrice).toFixed(0)}`;
+        detailOriginal.textContent = price.toFixed(0);
+        detailOriginalCopy.textContent = price.toFixed(0);
+        detailDiscount.textContent = Math.abs(price - finalPrice).toFixed(0);
+        detailRate.textContent = `${discount_rate.toFixed(2)} %`;
+        detailFinal.textContent = finalPrice.toFixed(0);
+      } else if (currentMode === 'triple') {
+        const r2 = Number(discountValue2.value) || 0;
+        const r3 = Number(discountValue3.value) || 0;
+        const after1 = price * (1 - rate / 100);
+        const after2 = after1 * (1 - r2 / 100);
+        const after3 = after2 * (1 - r3 / 100);
+        const saved = price - after3;
+        const effective = price === 0 ? 0 : (1 - after3 / price) * 100;
+
+        tripleFinalValue.textContent = `₹${after3.toFixed(2)}`;
+        tripleSavedValue.textContent = `₹${saved.toFixed(2)}`;
+        tripleEffectiveDiscount.textContent = `${effective.toFixed(2)}%`;
+        tripleOriginalValue.textContent = price.toFixed(0);
+        tripleFirstDiscount.textContent = `${rate.toFixed(0)}%`;
+        tripleSecondDiscount.textContent = `${r2.toFixed(0)}%`;
+        tripleThirdDiscount.textContent = `${r3.toFixed(0)}%`;
+        return;
+      } else if (currentMode === 'easy') {
+        const discountAmount = rate;
+        const finalPrice = price - discountAmount;
+        const discountRate = price === 0 ? 0 : (discountAmount / price) * 100;
+        resultCaption.textContent = 'Final Price';
+        resultValue.textContent = `₹${finalPrice.toFixed(0)}`;
+        savedValue.textContent = `₹${discountAmount.toFixed(0)}`;
+        detailOriginal.textContent = price.toFixed(0);
+        detailOriginalCopy.textContent = price.toFixed(0);
+        detailDiscount.textContent = discountAmount.toFixed(0);
+        detailRate.textContent = `${discountRate.toFixed(2)} %`;
+        detailFinal.textContent = finalPrice.toFixed(0);
+      }
+    }
+
+    function clearFields() {
+      originalPrice.value = '500';
+      discountValue.value = '10';
+      discountValue2.value = '10';
+      discountValue3.value = '15';
+      calculate();
+    }
+
+    openModal.addEventListener('click', openSelection);
+    closeModal.addEventListener('click', closeSelection);
+    clearBtn.addEventListener('click', clearFields);
+    calculateBtn.addEventListener('click', calculate);
+
+    originalPrice.addEventListener('input', calculate);
+    discountValue.addEventListener('input', calculate);
+    discountValue2.addEventListener('input', calculate);
+    discountValue3.addEventListener('input', calculate);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeSelection();
+    });
+
+    document.querySelectorAll('.choice').forEach(choice => {
+      choice.addEventListener('click', () => {
+        const mode = choice.getAttribute('data-mode');
+        syncMode(mode);
+      });
+    });
+
+    syncMode('final');
+  </script>
+</body>
+</html>
