@@ -1,0 +1,62 @@
+{
+  "name": "discount-calculater",
+  "version": "1.0.0",
+  "description": "Anantapur Book Center - Professional Discount Calculator",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win --publish never",
+    "package:win": "electron-packager . --overwrite --asar=false --platform=win32 --arch=x64 --icon=icon.png --prune=true --out=release-builds --version-string.CompanyName=AnantapurBookCenter --version-string.FileDescription=DiscountCalculator --version-string.ProductName=\"Anantapur Book Center - Discount Calculator\"",
+    "make-installer": "node make-installer.js"
+  },
+  "build": {
+    "appId": "com.anantapurbookcenter.discountcalculator",
+    "productName": "Anantapur Book Center - Discount Calculator",
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "certificateFile": null,
+      "certificatePassword": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Anantapur Book Center"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramireddyhari1/abcsai.git"
+  },
+  "keywords": [
+    "discount",
+    "calculator"
+  ],
+  "author": "Anantapur Book Center",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ramireddyhari1/abcsai/issues"
+  },
+  "homepage": "https://github.com/ramireddyhari1/abcsai#readme",
+  "devDependencies": {
+    "electron": "^42.0.1",
+    "electron-builder": "^26.8.1",
+    "electron-packager": "^17.1.2"
+  }
+}
